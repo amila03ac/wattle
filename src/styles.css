@@ -21,12 +21,17 @@
 /* Wattle: golden bloom on eucalypt. The flower is a cluster of tiny gold
    balls, which is as close to a star as a plant gets. */
 :root{
-  --gold:#C98A08; --gold-bright:#E9A81C; --gold-soft:#FBE9B8;
-  --leaf:#2E4A3C; --leaf-mid:#3F6B54; --leaf-soft:#D6E2D8;
-  --bark:#B5533A;          /* not quite: warm, never an alarming red */
-  --fresh:#2E7D53;         /* correct */
-  --paper:#F1F4EE; --card:#FFFFFF; --ink:#1B2620; --ink-soft:#586A5D;
-  --line:#D2DCD1; --pad:#FFFFFF; --pad-line:#C2CFC2;
+  --gold:#A87608; --gold-bright:#E0A21A; --gold-soft:#F7E5AE;
+  --leaf:#2C4A3A; --leaf-mid:#3D6A52; --leaf-soft:#C7DAC2;
+  --bark:#AC4E36;          /* not quite: warm, never an alarming red */
+  --fresh:#2A7A4F;         /* correct */
+  /* A pale eucalypt ground, not an off-white. The cards are barely off white
+     so they lift away from it, the same relationship the dark theme has. */
+  --paper:#E3EDDF; --card:#FAFCF8; --ink:#17241C; --ink-soft:#4F6455;
+  --line:#C8D9C3; --pad:#FAFCF8; --pad-line:#BCCFB6;
+  /* Text on the two fixed surfaces. Identical in both themes, because gold
+     stays gold and the speaker stays deep green. */
+  --on-gold:#17241C; --on-leaf:#FFFFFF;
   --r:14px; --gap:6px;
 }
 @media (prefers-color-scheme:dark){
@@ -75,7 +80,7 @@ button:focus-visible,textarea:focus-visible,input:focus-visible{
 
 .bar{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 4px 8px}
 .tally{display:flex; align-items:center; gap:7px}
-.tally .pip{color:var(--gold-bright); font-size:24px; line-height:1}
+.tally .pip{color:var(--gold); font-size:24px; line-height:1}
 .tally .n{font-size:24px; font-weight:700; font-variant-numeric:tabular-nums}
 .chip{
   font-size:13px; color:var(--ink-soft); background:var(--card);
@@ -112,7 +117,7 @@ h2{font-size:21px; margin:22px 0 10px; font-weight:600}
   flex:1; text-align:center; font-size:12px; color:var(--ink-soft);
   padding:7px 0; border-radius:8px; background:var(--paper); border:1px solid var(--line);
 }
-.day.done{background:var(--gold-bright); color:#1B2620; border-color:var(--gold-bright); font-weight:600}
+.day.done{background:var(--gold-bright); color:var(--on-gold); border-color:var(--gold-bright); font-weight:600}
 .badges{display:flex; flex-wrap:wrap; gap:7px; margin-top:14px}
 .badge{font-size:13px; padding:5px 11px; border-radius:999px; background:var(--gold-soft); border:1px solid var(--gold)}
 .badge.locked{background:transparent; color:var(--ink-soft); border:1px dashed var(--line)}
@@ -132,7 +137,7 @@ h2{font-size:21px; margin:22px 0 10px; font-weight:600}
   /* Sized off the viewport height: still a big target, but it yields on a
      short screen instead of pushing the keypad off. */
   width:clamp(76px,11vh,118px); height:clamp(76px,11vh,118px); flex:none;
-  border-radius:50%; background:var(--leaf-mid); color:#fff;
+  border-radius:50%; background:var(--leaf-mid); color:var(--on-leaf);
   font-size:clamp(32px,5vh,48px); display:grid; place-items:center;
   box-shadow:0 4px 0 var(--leaf); transition:transform .12s;
 }
@@ -161,7 +166,7 @@ h2{font-size:21px; margin:22px 0 10px; font-weight:600}
 .say.good{color:var(--fresh)}
 .say.bad{color:var(--bark)}
 .reveal{font-family:"Andika",Georgia,serif; font-size:30px; font-weight:700; color:var(--leaf-mid); letter-spacing:2px}
-.bloom{font-size:64px; color:var(--gold-bright); line-height:1}
+.bloom{font-size:64px; color:var(--gold); line-height:1}
 
 .pad{display:flex; flex:0 0 auto; flex-direction:column; gap:clamp(5px,0.8vh,7px); padding-bottom:0; --keys:10}
 .row{display:flex; gap:var(--gap); justify-content:center}
@@ -177,7 +182,7 @@ h2{font-size:21px; margin:22px 0 10px; font-weight:600}
 .key[disabled]{opacity:.3; cursor:default}
 .key[disabled]:active{transform:none; border-bottom-width:3px}
 .row.actions .key{flex:1 1 0; font-family:"Fredoka",sans-serif; font-size:16px}
-.key.go{background:var(--gold-bright); border-color:var(--gold); color:#1B2620; font-weight:600}
+.key.go{background:var(--gold-bright); border-color:var(--gold); color:var(--on-gold); font-weight:600}
 .pad.numpad .key{height:clamp(50px,7.2vh,64px); font-family:"Fredoka",sans-serif; font-size:26px}
 
 .field{margin-bottom:18px}
@@ -190,10 +195,10 @@ textarea{min-height:170px; line-height:1.7; resize:vertical}
 select{appearance:none; background-image:none}
 .seg{display:flex; gap:6px; flex-wrap:wrap}
 .seg button{padding:10px 15px; border-radius:10px; border:1px solid var(--line); background:var(--card); font-size:15px}
-.seg button[aria-pressed="true"]{background:var(--leaf-mid); color:#fff; border-color:var(--leaf-mid)}
+.seg button[aria-pressed="true"]{background:var(--leaf-mid); color:var(--on-leaf); border-color:var(--leaf-mid)}
 .note{font-size:13px; color:var(--ink-soft); line-height:1.6; margin:8px 0 0}
 .btn{
-  width:100%; padding:16px; border-radius:12px; background:var(--gold-bright); color:#1B2620;
+  width:100%; padding:16px; border-radius:12px; background:var(--gold-bright); color:var(--on-gold);
   font-size:18px; font-weight:600; border-bottom:4px solid var(--gold);
 }
 .btn.quiet{background:var(--card); color:var(--ink); border:1px solid var(--line); border-bottom-width:4px}
@@ -204,6 +209,6 @@ select{appearance:none; background-image:none}
 
 .errbar{
   position:fixed; left:0; right:0; bottom:0; z-index:99; padding:10px 14px;
-  background:var(--bark); color:#fff; font-size:13px; line-height:1.45; white-space:pre-wrap;
+  background:var(--bark); color:var(--on-leaf); font-size:13px; line-height:1.45; white-space:pre-wrap;
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
