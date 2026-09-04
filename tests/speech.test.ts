@@ -93,7 +93,7 @@ describe("spellingParts", () => {
     const gaps = spellingParts("a", "b").filter((p): p is { gap: number } => "gap" in p);
     expect(gaps).toHaveLength(1);
     expect(gaps[0]!.gap).toBeGreaterThanOrEqual(1000);
-    expect(GAP_MS).toBe(2000);
+    expect(GAP_MS).toBe(1250);
   });
 
   it("says the word alone when there is no sentence", () => {

@@ -207,7 +207,7 @@ export class Speech {
 /* Reading pace. Tune these if the parts still run together for a young listener. */
 export const WORD_RATE = 0.5; // the word to be spelled: slow and deliberate
 export const SENTENCE_RATE = 0.92; // the example: brisker, so it sounds like a separate thing
-export const GAP_MS = 2000; // real silence either side of the sentence
+export const GAP_MS = 1250; // real silence between the word and the sentence
 
 /**
  * The word, a real pause, then the sentence. That is the whole reading.

@@ -164,7 +164,7 @@ function paintStage(): void {
     if (heard) {
       const btn = el("button", { class: "speak", id: "speakBtn", "aria-label": "Hear the word again" }, ["🔊"]);
       btn.addEventListener("click", () => speech.say([{ text: item.word, rate: WORD_RATE }]));
-      stage.append(btn, el("p", { class: "hint" }, ["Tap the speaker to hear the word again."]));
+      stage.append(btn, el("p", { class: "hint" }, ["Tap to hear the word again."]));
       const aside = clueNode(item, true);
       if (aside) {
         const again = el("button", { class: "again" }, ["Read it all again"]);
