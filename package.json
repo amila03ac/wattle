@@ -1,0 +1,22 @@
+{
+  "name": "wattle",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Spelling and maths practice for young children. Parents set the work, the device reads it aloud, stars are earned. Offline, no accounts, no tracking.",
+  "license": "MIT",
+  "author": "amila03ac",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.4"
+  }
+}

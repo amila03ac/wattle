@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Wattle</title>
+  <meta name="description" content="Spelling and maths practice for young children. Works offline, keeps nothing off the device.">
+  <meta name="theme-color" content="#0E1A14">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Andika:wght@400;700&display=swap">
+</head>
+<body>
+  <div class="app">
+    <header class="bar">
+      <div class="tally"><span class="pip">★</span><span class="n" id="total">0</span></div>
+      <span class="chip" id="week">0 this week</span>
+      <button class="ghost" id="parentBtn">Grown-ups</button>
+    </header>
+
+    <section class="screen on" id="s-home">
+      <h1>Hello!</h1>
+      <p class="sub">Pick something to practise.</p>
+      <div class="pick">
+        <button class="mode" data-go="spell">
+          <span class="em" aria-hidden="true">🔤</span>
+          <span class="modetext"><span class="t">Spelling</span><span class="d" id="wordCount">10 words ready</span></span>
+        </button>
+        <button class="mode" data-go="math">
+          <span class="em" aria-hidden="true">🔢</span>
+          <span class="modetext"><span class="t">Maths</span><span class="d" id="mathDesc">Adding and taking away</span></span>
+        </button>
+      </div>
+      <div class="panel">
+        <div class="plabel"><span id="nextName">Next: 20 stars</span><span id="nextLeft">20 to go</span></div>
+        <div class="track"><div class="fill" id="fill"></div></div>
+        <div class="days" id="days"></div>
+        <div class="badges" id="badges"></div>
+      </div>
+    </section>
+
+    <section class="screen" id="s-gate">
+      <div class="gate">
+        <h1>Grown-ups</h1>
+        <p class="sub">Answer this to carry on.</p>
+        <div class="sum" id="gateSum">47 + 25</div>
+        <input type="number" id="gateInput" inputmode="numeric" placeholder="?" aria-label="Answer">
+        <div class="stack">
+          <button class="btn" id="gateGo">Enter</button>
+          <button class="btn quiet" data-back>Back</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="s-setup">
+      <h1>Set the work</h1>
+      <p class="sub">Changes save as you go.</p>
+
+      <h2>Spelling words</h2>
+      <div class="field">
+        <label for="wordsInput">One word per line. Add | and a sentence for a clue</label>
+        <textarea id="wordsInput" spellcheck="false" autocomplete="off"></textarea>
+        <p class="note" id="missNote"></p>
+      </div>
+
+      <h2>Maths</h2>
+      <div class="field">
+        <label>What to practise</label>
+        <div class="seg" id="opSeg">
+          <button data-op="add">Adding</button>
+          <button data-op="sub">Taking away</button>
+          <button data-op="mixed">Both</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Biggest number</label>
+        <div class="seg" id="maxSeg">
+          <button data-max="20">Up to 20</button>
+          <button data-max="50">Up to 50</button>
+          <button data-max="100">Up to 100</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Carrying and borrowing</label>
+        <div class="seg" id="regSeg">
+          <button data-reg="0">Keep it simple</button>
+          <button data-reg="1">Include them</button>
+        </div>
+        <p class="note">Questions are made fresh each time, so there is nothing to type here.</p>
+      </div>
+
+      <h2>Letters</h2>
+      <div class="field">
+        <label>Keypad order</label>
+        <div class="seg" id="layoutSeg">
+          <button data-layout="qwerty">Like a keyboard</button>
+          <button data-layout="abc">A to Z</button>
+        </div>
+      </div>
+
+      <h2>Voice</h2>
+      <div class="field">
+        <p class="note" id="voiceNote"></p>
+        <button class="btn quiet" id="voiceTest">Test the voice</button>
+        <p class="note" id="voiceResult"></p>
+      </div>
+
+      <h2>Her stars</h2>
+      <div class="field">
+        <p class="note" id="storeNote"></p>
+        <div class="stack">
+          <button class="btn quiet" id="exportBtn">Copy a backup</button>
+          <button class="btn quiet" id="importBtn">Restore from a backup</button>
+        </div>
+        <p class="note" id="backupNote"></p>
+      </div>
+
+      <div class="stack"><button class="btn" data-back>Done</button></div>
+    </section>
+
+    <section class="screen" id="s-drill">
+      <div class="drillhead">
+        <button class="ghost" data-back>Stop</button>
+        <div class="dots" id="dots"></div>
+        <span class="chip" id="earned">★ 0</span>
+      </div>
+      <div class="stage" id="stage"></div>
+      <div class="pad" id="pad"></div>
+    </section>
+
+    <section class="screen" id="s-done">
+      <div class="stage">
+        <div class="bloom" aria-hidden="true">★</div>
+        <h1 id="doneTitle">All finished!</h1>
+        <p class="sub" id="doneMsg"></p>
+      </div>
+      <div class="stack"><button class="btn" data-back>Back to the start</button></div>
+    </section>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

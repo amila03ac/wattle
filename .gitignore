@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.DS_Store
+*.local
+.vite/
+
+# Capacitor native projects (generated; see README)
+/android/
+/ios/
+
+# Never commit a real child's work. Personal word lists stay on the device.
+/wordlists/
+*.wordlist
+*.private.*
