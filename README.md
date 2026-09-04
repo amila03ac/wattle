@@ -164,4 +164,10 @@ text to speech.
 
 ## Licence
 
-MIT.
+The code is MIT.
+
+The two bundled typefaces are not. Fredoka and Andika are both under the SIL
+Open Font License 1.1, which allows bundling and redistribution, commercial use
+included, and asks that the copyright notice and licence travel with the files.
+They do: see [`src/fonts/`](src/fonts/) for both licence texts and the
+attribution.
