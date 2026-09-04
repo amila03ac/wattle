@@ -3,10 +3,20 @@
 Spelling and maths practice for primary-school children. A grown-up sets the
 work, the device reads each word aloud, and the learner earns stars.
 
-- **Works offline.** No account, no server, no network calls once the fonts load.
-- **Keeps nothing off the device.** No analytics, no tracking, no telemetry.
+- **Works offline.** Install it once and it never needs the network again.
+- **Keeps nothing off the device.** No analytics, no tracking, no telemetry, and
+  no third-party requests at all: even the fonts ship with the app.
 - **The grown-up writes the content.** This week's real spelling list, not a
   stock word bank chosen by someone else.
+
+## Install it
+
+**<https://amila03ac.github.io/wattle/>**
+
+Open that on a phone or tablet, then choose **Add to Home Screen**. You get an
+icon that opens fullscreen with no browser bars, and after that first visit it
+runs with the network off. Updates arrive quietly the next time it is opened
+online.
 
 ---
 
@@ -74,10 +84,10 @@ npm run build   # static files into dist/
 
 ### On a tablet
 
-Open the dev or preview URL in Chrome and choose **Add to Home Screen**.
-Android's app pinning (Settings → Security → App pinning) locks the tablet to a
-single app until a PIN is entered, which keeps a practice session from drifting
-into YouTube.
+Install from the link above rather than the dev server, so the service worker
+registers and the app keeps working offline. Android's app pinning (Settings →
+Security → App pinning) locks the tablet to a single app until a PIN is entered,
+which keeps a practice session from drifting into YouTube.
 
 ## Where the stars are kept
 
@@ -105,8 +115,10 @@ leaves the device. Local-only is the design, not a gap in it.
 
 ## Privacy
 
-Nothing leaves the device. The only network request is to Google Fonts on first
-load; move the fonts into `public/` if you want even that gone.
+Nothing leaves the device, and nothing is fetched from anyone else. Fredoka and
+Andika are served from `src/fonts/`, so there is no request to Google Fonts and
+no third party learns that the app was opened. Once installed, there are no
+network requests at all.
 
 **Keep real word lists out of version control.** A weekly spelling list belongs
 to the person using the app, and published alongside a name it can narrow down a
@@ -141,8 +153,12 @@ src/
 tests/          the logic above, no DOM
 ```
 
-Where next: a service worker for proper offline use, and Capacitor for an
-installable APK with native storage and native text to speech.
+Deployment is a GitHub Actions workflow that builds on every push to `main` and
+publishes `dist/` to Pages. `vite-plugin-pwa` generates the service worker and
+precaches the whole app, fonts included.
+
+Where next: Capacitor, for an installable APK with native storage and native
+text to speech.
 
 ## Licence
 

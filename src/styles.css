@@ -1,3 +1,23 @@
+/* Fonts ship with the app. Nothing is fetched from a third party, and the
+   text renders the same whether or not there is a network. Andika is a
+   literacy typeface: its single-storey a and g match the letterforms
+   children are taught to write, which is why it sets the words themselves. */
+@font-face{
+  font-family:"Fredoka";
+  src:url("./fonts/fredoka-var.woff2") format("woff2");
+  font-weight:400 700; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:"Andika";
+  src:url("./fonts/andika-400.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:"Andika";
+  src:url("./fonts/andika-700.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap;
+}
+
 /* Wattle: golden bloom on eucalypt. The flower is a cluster of tiny gold
    balls, which is as close to a star as a plant gets. */
 :root{
