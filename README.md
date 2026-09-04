@@ -154,7 +154,9 @@ tests/          the logic above, no DOM
 ```
 
 Deployment is a GitHub Actions workflow that builds on every push to `main` and
-publishes `dist/` to Pages. `vite-plugin-pwa` generates the service worker and
+publishes `dist/` to Pages. Forking it? Turn Pages on once under Settings >
+Pages > Build and deployment > Source: **GitHub Actions**. The workflow token
+cannot create the site on its own, so the first run fails until that is set. `vite-plugin-pwa` generates the service worker and
 precaches the whole app, fonts included.
 
 Where next: Capacitor, for an installable APK with native storage and native
