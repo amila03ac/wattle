@@ -24,8 +24,9 @@ online.
 
 **Spelling.** The word is spoken, never shown. The learner hears it, then taps
 it out on a large on-screen letter pad; a full keyboard would test typing rather
-than spelling. Each word can carry a sentence, read after the word the way a
-teacher reads a spelling test.
+than spelling. Each word can carry a sentence, read after the word with a real
+pause between the two. The speaker button replays the word on its own whenever
+it is needed, which is why the reading does not repeat it at the end.
 
 **Maths.** Addition and subtraction, generated from rules rather than typed out.
 Set the operation, the ceiling, and whether to include carrying and borrowing;

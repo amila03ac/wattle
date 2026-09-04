@@ -51,7 +51,15 @@ body{
   margin:0; background:var(--paper); color:var(--ink);
   font-family:"Fredoka",system-ui,-apple-system,sans-serif;
   -webkit-tap-highlight-color:transparent;
+  /* A long press on a key used to raise the selection callout mid-drill.
+     Nothing outside the form fields is meant to be selected. */
+  -webkit-user-select:none; user-select:none;
+  -webkit-touch-callout:none;
+  /* Also kills the double-tap-to-zoom delay on every tap. */
+  touch-action:manipulation;
 }
+/* The grown-up does need to select and edit text in the form fields. */
+input,textarea,select{-webkit-user-select:text; user-select:text; -webkit-touch-callout:default}
 button{font:inherit; color:inherit; background:none; border:none; cursor:pointer}
 button:focus-visible,textarea:focus-visible,input:focus-visible{
   outline:3px solid var(--gold-bright); outline-offset:2px;
@@ -161,6 +169,8 @@ h2{font-size:21px; margin:22px 0 10px; font-weight:600}
   font-family:"Andika",Georgia,serif; transition:transform .08s;
 }
 .key:active{transform:translateY(2px); border-bottom-width:1px}
+.key[disabled]{opacity:.3; cursor:default}
+.key[disabled]:active{transform:none; border-bottom-width:3px}
 .row.actions .key{flex:1 1 0; font-family:"Fredoka",sans-serif; font-size:16px}
 .key.go{background:var(--gold-bright); border-color:var(--gold); color:#1B2620; font-weight:600}
 .pad.numpad .key{height:62px; font-family:"Fredoka",sans-serif; font-size:26px}

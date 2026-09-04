@@ -60,16 +60,24 @@ describe("chooseVoice", () => {
 });
 
 describe("spellingParts", () => {
-  it("reads word, sentence, word with real silence between them", () => {
+  it("reads the word, then a real silence, then the sentence", () => {
     const parts = spellingParts("because", "I was late because of the rain.");
-    expect(parts).toHaveLength(5);
+    expect(parts).toHaveLength(3);
     expect(parts.map((p) => ("gap" in p ? "gap" : p.text))).toEqual([
       "because",
       "gap",
       "I was late because of the rain.",
-      "gap",
-      "because",
     ]);
+  });
+
+  // The speaker button replays the word on demand, so a trailing repeat every
+  // time is dead weight.
+  it("does not say the word a second time", () => {
+    const spoken = spellingParts("water", "I drank water.")
+      .filter((p): p is { text: string; rate: number } => "text" in p)
+      .map((p) => p.text);
+    expect(spoken).toEqual(["water", "I drank water."]);
+    expect(spoken.filter((t) => t === "water")).toHaveLength(1);
   });
 
   // Two signals separate the word from the example: silence, and a slower rate.
@@ -83,8 +91,8 @@ describe("spellingParts", () => {
 
   it("uses a real pause, not a comma-length one", () => {
     const gaps = spellingParts("a", "b").filter((p): p is { gap: number } => "gap" in p);
-    expect(gaps).toHaveLength(2);
-    for (const g of gaps) expect(g.gap).toBeGreaterThanOrEqual(1000);
+    expect(gaps).toHaveLength(1);
+    expect(gaps[0]!.gap).toBeGreaterThanOrEqual(1000);
     expect(GAP_MS).toBe(2000);
   });
 

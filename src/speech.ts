@@ -209,14 +209,18 @@ export const WORD_RATE = 0.5; // the word to be spelled: slow and deliberate
 export const SENTENCE_RATE = 0.92; // the example: brisker, so it sounds like a separate thing
 export const GAP_MS = 2000; // real silence either side of the sentence
 
-/** Word, beat, sentence, beat, word: the way a teacher reads a spelling test. */
+/**
+ * The word, a real pause, then the sentence. That is the whole reading.
+ *
+ * A teacher repeats the word at the end, and this used to as well, but the
+ * speaker button already replays the word on its own. Sitting through a third
+ * reading every single time earns nothing when one tap gets it on demand.
+ */
 export function spellingParts(word: string, sentence: string): SpeechPart[] {
   if (!sentence) return [{ text: word, rate: WORD_RATE }];
   return [
     { text: word, rate: WORD_RATE },
     { gap: GAP_MS },
     { text: sentence, rate: SENTENCE_RATE },
-    { gap: GAP_MS },
-    { text: word, rate: WORD_RATE },
   ];
 }

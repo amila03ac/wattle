@@ -35,6 +35,14 @@ window.addEventListener("error", (e) => {
   setText(bar, `Something broke: ${e.message} (line ${e.lineno})`);
 });
 
+/* CSS suppresses the selection callout; this covers the long-press context menu
+   itself, which some Android builds still raise on a button. Form fields keep
+   their menu, since a grown-up may want to paste a word list. */
+document.addEventListener("contextmenu", (e) => {
+  if ((e.target as HTMLElement).closest("input, textarea, select")) return;
+  e.preventDefault();
+});
+
 const store: Store = createStore();
 const speech = new Speech();
 let save: SaveData = freshSave();
@@ -197,6 +205,21 @@ function paintSlot(): void {
   clear(slot);
   if (s.typed) setText(slot, s.typed);
   else slot.append(el("span", { class: "caret" }, ["–"]));
+  paintActionKeys();
+}
+
+/**
+ * Rub out and Done do nothing with an empty answer, so they are disabled rather
+ * than silently ignoring a tap. They are also disabled once an answer is in and
+ * the result is showing.
+ */
+function paintActionKeys(): void {
+  const s = session;
+  const usable = !!s && !s.locked && s.typed.length > 0;
+  for (const sel of ['#pad [data-k="del"]', '#pad [data-k="go"]']) {
+    const btn = document.querySelector<HTMLButtonElement>(sel);
+    if (btn) btn.disabled = !usable;
+  }
 }
 
 function paintPad(): void {
@@ -257,6 +280,7 @@ function submitAnswer(): void {
     const won = starsFor(s.attempt, true);
     s.earned += won;
     s.locked = true;
+    paintActionKeys();
     slot.classList.add("good");
     msg.className = "say good";
     setText(msg, s.attempt === 0 ? "Yes! ★ 1 star" : "Got there: ★ ½ a star");
@@ -282,6 +306,7 @@ function submitAnswer(): void {
   }
 
   s.locked = true;
+  paintActionKeys();
   msg.className = "say";
   clear(msg);
   if (s.mode === "spell") {
