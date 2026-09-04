@@ -2,7 +2,7 @@
  * The saved record. This outlives redesigns, so every change goes through a
  * numbered migration rather than a hopeful `??` at the point of use.
  */
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 export const STORE_KEY = "wattle.save";
 
 export type MathOp = "add" | "sub" | "mixed";
@@ -26,6 +26,16 @@ export interface WeekRecord {
 
 export interface SaveData {
   v: number;
+  /**
+   * What to call the learner on the home screen. Stays on this device: it is
+   * never sent anywhere, and it is deliberately not in the repo.
+   */
+  learnerName: string;
+  /**
+   * Chosen speech voice, by voiceURI. Empty means pick automatically. A device
+   * that lacks the saved voice falls back rather than going silent.
+   */
+  voiceURI: string;
   /** Raw lines, each "word" or "word | a sentence using the word". */
   words: string[];
   /** Words missed and not yet re-learnt; they jump the queue next session. */
@@ -67,6 +77,8 @@ export function weekdayIndex(d: Date = new Date()): number {
 export function freshSave(): SaveData {
   return {
     v: SCHEMA_VERSION,
+    learnerName: "",
+    voiceURI: "",
     words: [...SEED_WORDS],
     missed: [],
     math: { op: "mixed", max: 100, regroup: true },
@@ -82,8 +94,25 @@ export function freshSave(): SaveData {
  */
 function migrate(raw: Record<string, unknown>): Record<string, unknown> {
   const data = { ...raw };
-  // if ((data.v ?? 0) < 2) { ...; data.v = 2; }
+  const from = typeof data["v"] === "number" ? (data["v"] as number) : 1;
+
+  // v1 -> v2: a name for the home screen, and a chosen voice. Both optional,
+  // so an existing save gains them empty and behaves exactly as before.
+  if (from < 2) {
+    if (typeof data["learnerName"] !== "string") data["learnerName"] = "";
+    if (typeof data["voiceURI"] !== "string") data["voiceURI"] = "";
+    data["v"] = 2;
+  }
+
   return data;
+}
+
+/** Long enough for any name, short enough to sit on one line of the greeting. */
+export const MAX_NAME_LEN = 24;
+
+export function cleanName(raw: unknown): string {
+  if (typeof raw !== "string") return "";
+  return raw.replace(/\s+/g, " ").trim().slice(0, MAX_NAME_LEN);
 }
 
 /** Defensive: a save may be truncated, hand-edited, or from a future version. */
@@ -106,6 +135,8 @@ export function parseSave(text: string | null): SaveData {
 
   const save: SaveData = {
     v: SCHEMA_VERSION,
+    learnerName: cleanName(d["learnerName"]),
+    voiceURI: typeof d["voiceURI"] === "string" ? d["voiceURI"].slice(0, 300) : "",
     words: words.length ? words : base.words,
     missed,
     math: {

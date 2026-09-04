@@ -5,6 +5,7 @@ import {
   parseSave,
   freshSave,
   rollWeek,
+  cleanName,
   type SaveData,
   type MathOp,
   type PadLayout,
@@ -20,7 +21,7 @@ import {
   type SpellingItem,
 } from "./content.js";
 import { starsFor, bankSession, progress, formatStars, MILESTONES } from "./scoring.js";
-import { Speech, spellingParts, WORD_RATE } from "./speech.js";
+import { Speech, spellingParts, WORD_RATE, VOICE_SAMPLE, VOICES_READY } from "./speech.js";
 import { letterRows, widestRow, readKey, MAX_SPELLING_LEN, MAX_ANSWER_LEN } from "./keypad.js";
 import { el, need, clear, setText } from "./dom.js";
 
@@ -60,6 +61,7 @@ function show(id: ScreenId): void {
 /* --------------------------------------------------------------------- home */
 
 function paintHome(): void {
+  setText(need("#greeting"), save.learnerName ? `Hello, ${save.learnerName}!` : "Hello!");
   setText(need("#total"), formatStars(save.stars));
   setText(need("#week"), `${formatStars(save.week.stars)} this week`);
   setText(need("#wordCount"), `${save.words.length} ${save.words.length === 1 ? "word" : "words"} ready`);
@@ -305,7 +307,8 @@ function nextItem(): void {
   save = bankSession(save, s.earned);
   void persist();
   paintHome();
-  setText(need("#doneTitle"), s.earned >= 9 ? "Brilliant!" : s.earned >= 6 ? "Well done!" : "Good practice!");
+  const praise = s.earned >= 9 ? "Brilliant" : s.earned >= 6 ? "Well done" : "Good practice";
+  setText(need("#doneTitle"), save.learnerName ? `${praise}, ${save.learnerName}!` : `${praise}!`);
   setText(
     need("#doneMsg"),
     `You earned ${formatStars(s.earned)} stars. That makes ${formatStars(save.stars)} altogether.`,
@@ -336,12 +339,8 @@ function paintSetup(): void {
   press("regSeg", "reg", save.math.regroup ? "1" : "0");
   press("layoutSeg", "layout", save.layout);
 
-  setText(
-    need("#voiceNote"),
-    speech.available()
-      ? `Voice in use: ${speech.voiceLabel()}`
-      : "This device has no speech, so the sentence with a gap is used as the clue instead.",
-  );
+  need<HTMLInputElement>("#nameInput").value = save.learnerName;
+  paintVoicePicker();
   setText(
     need("#storeNote"),
     store.kind === "native"
@@ -351,6 +350,53 @@ function paintSetup(): void {
         : "Nothing can be saved on this device; stars will not survive a reload.",
   );
 }
+
+/**
+ * The voice list is device-specific and arrives asynchronously on Android, so
+ * it is rebuilt rather than assumed, and it says plainly when a saved choice is
+ * not installed here.
+ */
+function paintVoicePicker(): void {
+  const pick = need<HTMLSelectElement>("#voicePick");
+  const note = need("#voiceNote");
+  const test = need<HTMLButtonElement>("#voiceTest");
+  clear(pick);
+
+  if (!speech.available()) {
+    pick.disabled = true;
+    test.disabled = true;
+    setText(note, "This device has no speech, so the sentence with a gap is used as the clue instead.");
+    return;
+  }
+
+  const voices = speech.list();
+  pick.disabled = false;
+  test.disabled = false;
+  pick.append(el("option", { value: "" }, ["Choose automatically (Australian first)"]));
+  for (const v of voices) {
+    pick.append(el("option", { value: v.voiceURI }, [`${v.name} (${v.lang})`]));
+  }
+  pick.value = voices.some((v) => v.voiceURI === save.voiceURI) ? save.voiceURI : "";
+
+  if (!voices.length) setText(note, "No English voices found on this device yet.");
+  else if (speech.preferenceMissing())
+    setText(note, `The saved voice is not on this device, so ${speech.voiceLabel()} is being used instead.`);
+  else setText(note, `Reading with ${speech.voiceLabel()}. ${voices.length} English voices available.`);
+}
+
+need<HTMLInputElement>("#nameInput").addEventListener("input", (e) => {
+  save.learnerName = cleanName((e.target as HTMLInputElement).value);
+  void persist();
+  paintHome();
+});
+
+need<HTMLSelectElement>("#voicePick").addEventListener("change", (e) => {
+  save.voiceURI = (e.target as HTMLSelectElement).value;
+  speech.prefer(save.voiceURI);
+  void persist();
+  paintVoicePicker();
+  setText(need("#voiceResult"), "");
+});
 
 need<HTMLTextAreaElement>("#wordsInput").addEventListener("input", (e) => {
   save.words = (e.target as HTMLTextAreaElement).value
@@ -438,10 +484,16 @@ need("#voiceTest").addEventListener("click", () => {
     setText(out, "No speech on this device at all.");
     return;
   }
-  setText(out, `Speaking now… (${speech.voiceCount()} voices, ${speech.voiceLabel()})`);
-  speech.say([{ text: "Hello. Can you hear me?", rate: 0.85 }], () =>
-    setText(out, `It works. ${speech.voiceLabel()}, ${speech.voiceCount()} voices.`),
-  );
+  // Try out whatever is selected, not what is saved, so a voice can be heard
+  // before committing to it.
+  const chosen = need<HTMLSelectElement>("#voicePick").value;
+  const label = chosen
+    ? (speech.list().find((v) => v.voiceURI === chosen)?.name ?? "that voice")
+    : speech.voiceLabel();
+  setText(out, `Speaking as ${label}…`);
+  const done = (): void => setText(out, `That was ${label}, reading: "${VOICE_SAMPLE}"`);
+  if (chosen) speech.preview(chosen, done);
+  else speech.say([{ text: VOICE_SAMPLE, rate: 0.92 }], done);
 });
 
 /* --------------------------------------------------------------- navigation */
@@ -462,7 +514,10 @@ for (const b of document.querySelectorAll<HTMLElement>("[data-back]")) {
 
 async function boot(): Promise<void> {
   save = rollWeek(parseSave(await store.get(STORE_KEY)));
+  speech.prefer(save.voiceURI);
   await persist();
+  // Android fills the voice list after load; refresh the picker when it lands.
+  window.addEventListener(VOICES_READY, paintVoicePicker);
   void requestPersistence();
   paintHome();
 }

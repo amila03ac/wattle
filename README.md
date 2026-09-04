@@ -53,7 +53,28 @@ broken streak punishes illness and holidays as if they were laziness.
 ## Setting the work
 
 Behind a grown-ups gate: a two-digit sum rather than a PIN that can be watched
-and copied.
+and copied. Inside are the word list, the maths rules, the keypad order, a name
+for the home screen, and the voice.
+
+### A name
+
+Optional. Fill it in and the home screen says "Hello, Robin!" instead of
+"Hello!", and so does the end of a session. Leave it blank and nothing changes.
+
+The name is stored with everything else on the device and is never transmitted.
+It does travel inside **Copy a backup**, which is the point of a backup, so put
+that text somewhere you would be happy putting a name.
+
+### A voice
+
+Every English voice the device offers is listed, Australian ones first, with
+**Hear this voice** to try one on the sentence it will actually read. The choice
+is saved by voice identifier.
+
+Voice lists differ between devices, so a backup restored elsewhere may name a
+voice that is not installed. That falls back to the automatic order and says so
+rather than going silent, and the original choice is kept in case the app
+returns to a device that has it.
 
 ```
 because | I was late because of the rain.

@@ -16,7 +16,7 @@
     </header>
 
     <section class="screen on" id="s-home">
-      <h1>Hello!</h1>
+      <h1 id="greeting">Hello!</h1>
       <p class="sub">Pick something to practise.</p>
       <div class="pick">
         <button class="mode" data-go="spell">
@@ -52,6 +52,14 @@
     <section class="screen" id="s-setup">
       <h1>Set the work</h1>
       <p class="sub">Changes save as you go.</p>
+
+      <h2>Who is this for</h2>
+      <div class="field">
+        <label for="nameInput">Name shown on the home screen</label>
+        <input type="text" id="nameInput" maxlength="24" autocomplete="off"
+               spellcheck="false" placeholder="Leave blank for just &ldquo;Hello!&rdquo;">
+        <p class="note">Stays on this device. It is never sent anywhere.</p>
+      </div>
 
       <h2>Spelling words</h2>
       <div class="field">
@@ -97,12 +105,16 @@
 
       <h2>Voice</h2>
       <div class="field">
-        <p class="note" id="voiceNote"></p>
-        <button class="btn quiet" id="voiceTest">Test the voice</button>
+        <label for="voicePick">Which voice reads the words</label>
+        <select id="voicePick"></select>
+        <div class="stack">
+          <button class="btn quiet" id="voiceTest">Hear this voice</button>
+        </div>
         <p class="note" id="voiceResult"></p>
+        <p class="note" id="voiceNote"></p>
       </div>
 
-      <h2>Her stars</h2>
+      <h2>Saved stars</h2>
       <div class="field">
         <p class="note" id="storeNote"></p>
         <div class="stack">
