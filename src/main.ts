@@ -6,6 +6,7 @@ import {
   freshSave,
   rollWeek,
   cleanName,
+  forBackup,
   type SaveData,
   type MathOp,
   type PadLayout,
@@ -24,6 +25,7 @@ import { starsFor, bankSession, progress, formatStars, MILESTONES } from "./scor
 import { Speech, spellingParts, WORD_RATE, VOICE_SAMPLE, VOICES_READY } from "./speech.js";
 import { letterRows, widestRow, readKey, MAX_SPELLING_LEN, MAX_ANSWER_LEN } from "./keypad.js";
 import { el, need, clear, setText } from "./dom.js";
+import { makeGateChallenge, cleanPin, isUsablePin, PIN_MIN } from "./gate.js";
 
 /* A failure must be visible: this runs on a tablet nobody can attach a debugger to. */
 window.addEventListener("error", (e) => {
@@ -365,6 +367,8 @@ function paintSetup(): void {
   press("layoutSeg", "layout", save.layout);
 
   need<HTMLInputElement>("#nameInput").value = save.learnerName;
+  need<HTMLInputElement>("#pinInput").value = save.gatePin;
+  paintPinNote();
   paintVoicePicker();
   setText(
     need("#storeNote"),
@@ -409,6 +413,29 @@ function paintVoicePicker(): void {
   else setText(note, `Reading with ${speech.voiceLabel()}. ${voices.length} English voices available.`);
 }
 
+function paintPinNote(): void {
+  const pin = save.gatePin;
+  setText(
+    need("#pinNote"),
+    !pin
+      ? "With no PIN, getting in here needs a times table."
+      : isUsablePin(pin)
+        ? "The PIN gets you in. A times table still works if you forget it, and the PIN is left out of a copied backup."
+        : `Needs at least ${PIN_MIN} digits to take effect. A times table is being used meanwhile.`,
+  );
+}
+
+need<HTMLInputElement>("#pinInput").addEventListener("input", (e) => {
+  const field = e.target as HTMLInputElement;
+  const cleaned = cleanPin(field.value);
+  // Rewriting the field is what stops letters appearing and then vanishing on
+  // save, which reads as the app losing what was typed.
+  if (field.value !== cleaned) field.value = cleaned;
+  save.gatePin = cleaned;
+  void persist();
+  paintPinNote();
+});
+
 need<HTMLInputElement>("#nameInput").addEventListener("input", (e) => {
   save.learnerName = cleanName((e.target as HTMLInputElement).value);
   void persist();
@@ -451,10 +478,13 @@ wireSegment("layoutSeg", "layout", (v) => (save.layout = v as PadLayout));
 /* ------------------------------------------------------------------- backup */
 
 need("#exportBtn").addEventListener("click", async () => {
-  const text = JSON.stringify(save);
+  const text = JSON.stringify(forBackup(save));
   try {
     await navigator.clipboard.writeText(text);
-    setText(need("#backupNote"), "Backup copied. Paste it somewhere safe; an email to yourself works.");
+    setText(
+      need("#backupNote"),
+      "Backup copied. Paste it somewhere safe; an email to yourself works. The PIN is left out.",
+    );
   } catch {
     window.prompt("Copy this and keep it safe:", text);
   }
@@ -477,27 +507,53 @@ need("#importBtn").addEventListener("click", () => {
 
 /* --------------------------------------------------------------------- gate */
 
+/**
+ * A PIN, when one is set, is only the quicker way in. The times-table question
+ * stays reachable underneath, because a forgotten PIN must not lock a grown-up
+ * out of their own settings, and either challenge keeps a young child out.
+ */
 let gateAnswer = 0;
-need("#parentBtn").addEventListener("click", () => {
-  const a = 21 + Math.floor(Math.random() * 45);
-  const b = 17 + Math.floor(Math.random() * 40);
-  gateAnswer = a + b;
-  setText(need("#gateSum"), `${a} + ${b}`);
+let gateAsksForPin = false;
+
+function paintGate(usePin: boolean): void {
+  gateAsksForPin = usePin;
   const input = need<HTMLInputElement>("#gateInput");
+  const swap = need<HTMLButtonElement>("#gateSwitch");
+
+  if (usePin) {
+    setText(need("#gateSum"), "••••");
+    input.placeholder = "PIN";
+    swap.hidden = false;
+    setText(swap, "Use a sum instead");
+  } else {
+    const q = makeGateChallenge();
+    gateAnswer = q.answer;
+    setText(need("#gateSum"), q.text);
+    input.placeholder = "?";
+    swap.hidden = !isUsablePin(save.gatePin);
+    setText(swap, "Use the PIN instead");
+  }
   input.value = "";
-  show("gate");
   setTimeout(() => input.focus(), 120);
+}
+
+need("#parentBtn").addEventListener("click", () => {
+  show("gate");
+  paintGate(isUsablePin(save.gatePin));
 });
+
+need("#gateSwitch").addEventListener("click", () => paintGate(!gateAsksForPin));
 
 need("#gateGo").addEventListener("click", () => {
   const input = need<HTMLInputElement>("#gateInput");
-  if (Number(input.value) === gateAnswer) {
+  const ok = gateAsksForPin ? input.value === save.gatePin : Number(input.value) === gateAnswer;
+  if (ok) {
     paintSetup();
     show("setup");
-  } else {
-    input.value = "";
-    input.placeholder = "Try again";
+    return;
   }
+  input.value = "";
+  input.placeholder = "Try again";
 });
 need("#gateInput").addEventListener("keydown", (e) => {
   if ((e as KeyboardEvent).key === "Enter") need<HTMLElement>("#gateGo").click();

@@ -53,9 +53,21 @@ broken streak punishes illness and holidays as if they were laziness.
 
 ## Setting the work
 
-Behind a grown-ups gate: a two-digit sum rather than a PIN that can be watched
-and copied. Inside are the word list, the maths rules, the keypad order, a name
-for the home screen, and the voice.
+Behind a grown-ups gate. Inside are the word list, the maths rules, the keypad
+order, a name for the home screen, the voice, and the gate itself.
+
+By default the gate is a times table, something like `8 × 11` or `96 ÷ 8`.
+Division always comes out whole, and 1, 2 and 10 never appear as a factor. This
+is not security, it is a speed bump sized to one person: beyond a young child,
+trivial for an adult. An addition question is not enough, because a determined
+seven-year-old will work `47 + 25` out given a minute.
+
+A PIN of 4 to 8 digits can be set instead, which is quicker to enter. The times
+table stays reachable underneath it, so a forgotten PIN cannot lock a grown-up
+out of their own settings, and either challenge keeps a child out just as well.
+The PIN is deliberately left out of a copied backup: a backup is meant to be
+pasted somewhere findable, and a PIN reused from elsewhere should not travel in
+an email. Restoring on a new device simply falls back to the times table.
 
 ### A name
 
@@ -168,6 +180,7 @@ src/
   state.ts      saved-record schema, defaults, migrations
   storage.ts    the Store interface and its backends
   content.ts    word parsing, cloze clues, session choice, sum generator
+  gate.ts       the grown-ups challenge and PIN rules
   scoring.ts    star rules, milestones, weekly counters
   speech.ts     text to speech, and coping with its absence
   keypad.ts     pad layouts and key sizing

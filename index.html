@@ -41,10 +41,11 @@
       <div class="gate">
         <h1>Grown-ups</h1>
         <p class="sub">Answer this to carry on.</p>
-        <div class="sum" id="gateSum">47 + 25</div>
+        <div class="sum" id="gateSum">8 &times; 7</div>
         <input type="number" id="gateInput" inputmode="numeric" placeholder="?" aria-label="Answer">
         <div class="stack">
           <button class="btn" id="gateGo">Enter</button>
+          <button class="again" id="gateSwitch" hidden>Use a sum instead</button>
           <button class="btn quiet" data-back>Back</button>
         </div>
       </div>
@@ -113,6 +114,14 @@
         </div>
         <p class="note" id="voiceResult"></p>
         <p class="note" id="voiceNote"></p>
+      </div>
+
+      <h2>Getting in here</h2>
+      <div class="field">
+        <label for="pinInput">PIN, 4 to 8 digits</label>
+        <input type="text" id="pinInput" inputmode="numeric" autocomplete="off"
+               maxlength="8" placeholder="Leave blank for a times table">
+        <p class="note" id="pinNote"></p>
       </div>
 
       <h2>Saved stars</h2>

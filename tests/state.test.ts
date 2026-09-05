@@ -90,7 +90,7 @@ describe("migrating a v1 save", () => {
 
   it("stamps the new version", () => {
     expect(parseSave(v1).v).toBe(SCHEMA_VERSION);
-    expect(SCHEMA_VERSION).toBe(2);
+    expect(SCHEMA_VERSION).toBe(3);
   });
 
   it("is idempotent, so re-reading a migrated save changes nothing", () => {
